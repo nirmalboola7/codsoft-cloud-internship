@@ -1,0 +1,18 @@
+```text
+# Python virtual environment
+BACKEND/venv/
+
+# Environment variables and AWS credentials
+BACKEND/.env
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# VS Code settings
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+```

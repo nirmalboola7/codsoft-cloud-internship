@@ -1,0 +1,135 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CodSoft Cloud Storage</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <header>
+
+        <div class="container header-content">
+
+            <div class="logo">
+                ☁️ CodSoft Cloud Storage
+            </div>
+
+            <div class="status">
+                ● S3 Connected
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="hero">
+
+            <h1>Cloud File Storage</h1>
+
+            <p>
+                Upload, manage and download your files securely
+                using AWS S3.
+            </p>
+
+        </section>
+
+
+        <!-- Upload Section -->
+
+        <section class="card">
+
+            <h2>Upload File</h2>
+
+            <p class="description">
+                Select a file to upload to your AWS S3 cloud storage.
+            </p>
+
+
+            <div class="upload-area">
+
+                <input
+                    type="file"
+                    id="fileInput"
+                >
+
+                <button
+                    id="uploadButton"
+                >
+                    Upload File
+                </button>
+
+            </div>
+
+
+            <div id="message"></div>
+
+        </section>
+
+
+        <!-- Files Section -->
+
+        <section class="card">
+
+            <div class="files-header">
+
+                <div>
+
+                    <h2>My Files</h2>
+
+                    <p class="description">
+                        Files stored in your cloud storage.
+                    </p>
+
+                </div>
+
+                <button
+                    id="refreshButton"
+                    class="refresh-button"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <div id="fileList">
+
+                <p class="loading">
+                    Loading files...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            CodSoft Cloud Internship • Task 1 • AWS S3
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
+```

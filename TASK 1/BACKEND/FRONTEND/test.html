@@ -1,0 +1,442 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CodSoft Cloud File Storage</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #222;
+        }
+
+        .upload-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .upload-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .download-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        #message {
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .file {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+
+        .file-name {
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <h1>☁️ CodSoft Cloud File Storage</h1>
+
+
+    <!-- Upload Section -->
+
+    <div class="upload-box">
+
+        <h2>Upload File</h2>
+
+        <input
+            type="file"
+            id="fileInput"
+        >
+
+        <br>
+
+        <button
+            class="upload-btn"
+            onclick="uploadFile()"
+        >
+            Upload
+        </button>
+
+        <div id="message"></div>
+
+    </div>
+
+
+    <!-- Files Section -->
+
+    <div class="upload-box">
+
+        <h2>My Files</h2>
+
+        <div id="fileList">
+            Loading files...
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Flask backend URL
+        const API_URL = "http://127.0.0.1:5000";
+
+
+        // --------------------------------------------------
+        // UPLOAD FILE
+        // --------------------------------------------------
+
+        async function uploadFile() {
+
+            const fileInput = document.getElementById("fileInput");
+
+            const message = document.getElementById("message");
+
+
+            if (fileInput.files.length === 0) {
+
+                message.innerText = "Please select a file.";
+
+                return;
+            }
+
+
+            const file = fileInput.files[0];
+
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+
+
+            message.innerText = "Uploading...";
+
+
+            try {
+
+                const response = await fetch(
+                    `${API_URL}/upload`,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+                const result = await response.json();
+
+
+                if (response.ok) {
+
+                    message.innerText =
+                        "✅ " + result.message;
+
+                    fileInput.value = "";
+
+                    loadFiles();
+
+                } else {
+
+                    message.innerText =
+                        "❌ " + result.error;
+
+                }
+
+
+            } catch (error) {
+
+                message.innerText =
+                    "❌ Could not connect to backend.";
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // --------------------------------------------------
+        // LOAD FILES
+        // --------------------------------------------------
+
+        async function loadFiles() {
+
+            const fileList =
+                document.getElementById("fileList");
+
+
+            try {
+
+                const response = await fetch(
+                    `${API_URL}/files`
+                );
+
+
+                const files =
+                    await response.json();
+
+
+                fileList.innerHTML = "";
+
+
+                if (files.length === 0) {
+
+                    fileList.innerHTML =
+                        "<p>No files uploaded yet.</p>";
+
+                    return;
+
+                }
+
+
+                files.forEach(file => {
+
+                    const fileDiv =
+                        document.createElement("div");
+
+                    fileDiv.className = "file";
+
+
+                    const fileName =
+                        document.createElement("span");
+
+                    fileName.className = "file-name";
+
+                    fileName.innerText =
+                        `${file.name} (${formatSize(file.size)})`;
+
+
+                    const buttons =
+                        document.createElement("div");
+
+
+                    // Download button
+                    const downloadButton =
+                        document.createElement("button");
+
+                    downloadButton.className =
+                        "download-btn";
+
+                    downloadButton.innerText =
+                        "Download";
+
+                    downloadButton.onclick =
+                        () => downloadFile(file.name);
+
+
+                    // Delete button
+                    const deleteButton =
+                        document.createElement("button");
+
+                    deleteButton.className =
+                        "delete-btn";
+
+                    deleteButton.innerText =
+                        "Delete";
+
+                    deleteButton.onclick =
+                        () => deleteFile(file.name);
+
+
+                    buttons.appendChild(downloadButton);
+
+                    buttons.appendChild(deleteButton);
+
+
+                    fileDiv.appendChild(fileName);
+
+                    fileDiv.appendChild(buttons);
+
+
+                    fileList.appendChild(fileDiv);
+
+                });
+
+
+            } catch (error) {
+
+                fileList.innerHTML =
+                    "<p>❌ Could not load files.</p>";
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // --------------------------------------------------
+        // DOWNLOAD FILE
+        // --------------------------------------------------
+
+        function downloadFile(filename) {
+
+            const url =
+                `${API_URL}/download/${encodeURIComponent(filename)}`;
+
+
+            window.location.href = url;
+
+        }
+
+
+        // --------------------------------------------------
+        // DELETE FILE
+        // --------------------------------------------------
+
+        async function deleteFile(filename) {
+
+            const confirmDelete =
+                confirm(
+                    `Are you sure you want to delete "${filename}"?`
+                );
+
+
+            if (!confirmDelete) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const response = await fetch(
+
+                    `${API_URL}/delete/${encodeURIComponent(filename)}`,
+
+                    {
+                        method: "DELETE"
+                    }
+
+                );
+
+
+                const result =
+                    await response.json();
+
+
+                if (response.ok) {
+
+                    alert(
+                        "✅ " + result.message
+                    );
+
+                    loadFiles();
+
+                } else {
+
+                    alert(
+                        "❌ " + result.error
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                alert(
+                    "❌ Could not connect to backend."
+                );
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // --------------------------------------------------
+        // FORMAT FILE SIZE
+        // --------------------------------------------------
+
+        function formatSize(bytes) {
+
+            if (bytes < 1024) {
+
+                return bytes + " B";
+
+            }
+
+
+            if (bytes < 1024 * 1024) {
+
+                return (bytes / 1024).toFixed(2) + " KB";
+
+            }
+
+
+            return (
+                bytes / (1024 * 1024)
+            ).toFixed(2) + " MB";
+
+        }
+
+
+        // Load files when page opens
+        loadFiles();
+
+    </script>
+
+
+</body>
+
+</html>
+```
