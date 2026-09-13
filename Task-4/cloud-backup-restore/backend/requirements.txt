@@ -1,4 +1,0 @@
-Flask
-boto3
-APScheduler
-flask-cors
