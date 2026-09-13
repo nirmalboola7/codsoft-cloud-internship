@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Cloud Backup & Restore</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>☁️ Cloud Backup & Restore</h1>
+
+        <p class="description">
+            Backup your local files to AWS S3
+            and restore previous backups.
+        </p>
+
+        <div class="card">
+
+            <h2>Create Backup</h2>
+
+            <p>
+                Create a ZIP backup of your files
+                and upload it to AWS S3.
+            </p>
+
+            <button onclick="createBackup()">
+                Create Backup
+            </button>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Status</h2>
+
+            <p id="status">
+                Ready
+            </p>
+
+        </div>
+        <div class="card">
+
+    <h2>Backup History</h2>
+
+    <button onclick="loadBackups()">
+        Refresh History
+    </button>
+
+    <div id="backupList">
+
+        <p>
+            Loading backups...
+        </p>
+
+    </div>
+
+</div>
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
